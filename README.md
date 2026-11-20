@@ -22,12 +22,22 @@ This version is built for OpenAI Codex with `AGENTS.md`, Codex skills, explicit 
 
 ## Quick Start
 
-Clone the repo, open it in Codex, and run:
+Clone the repository and check the required tools:
 
 ```bash
+git clone https://github.com/UJJWAL-SAXENA-09/codex-job-search-assistant.git
+cd codex-job-search-assistant
+python3 -m venv .venv
+source .venv/bin/activate
 python tools/setup_check.py
-python tests/smoke/validate_repo.py --full
+python tests/smoke/validate_repo.py
 ```
+
+On Windows, create the environment with `python -m venv .venv` and activate it in PowerShell with `.\.venv\Scripts\Activate.ps1` before running the two checks. The environment provides the `python` and `pip` commands expected by the setup check and is excluded from Git.
+
+The setup check reports missing tools; the smoke check validates the repository structure and tool entry points. Optional LaTeX compilation and portal checks are available with `--full`, as described under [Tools](#tools).
+
+Open this directory in Codex so it can load `AGENTS.md` and the skills in `.agents/skills/`.
 
 Then add your real career documents:
 
