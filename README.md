@@ -33,7 +33,7 @@ python tools/setup_check.py
 python tests/smoke/validate_repo.py
 ```
 
-On Windows, create the environment with `python -m venv .venv` and activate it in PowerShell with `.\.venv\Scripts\Activate.ps1` before running the two checks. The environment provides the `python` and `pip` commands expected by the setup check and is excluded from Git.
+On Windows, create the environment with `python -m venv .venv` and activate it in PowerShell with `.\.venv\Scripts\Activate.ps1` before running the two checks. The environment keeps project packages separate and is excluded from Git. The setup check uses the active Python interpreter and its `pip` module, so separate `python` or `pip` aliases are not required when running it with `python3`.
 
 The setup check reports missing tools; the smoke check validates the repository structure and tool entry points. Optional LaTeX compilation and portal checks are available with `--full`, as described under [Tools](#tools).
 

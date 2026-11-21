@@ -34,6 +34,27 @@ OPTIONAL_COMMANDS = ["node", "bun"]
 
 
 def command_version(command: str) -> tuple[bool, str]:
+    if command == "python":
+        return True, f"Python {sys.version.split()[0]} ({sys.executable})"
+    if command == "pip":
+        # Check pip for the interpreter running this tool, rather than an
+        # unrelated executable (or missing alias) on PATH.
+        try:
+            result = subprocess.run(
+                [sys.executable, "-m", "pip", "--version"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            return False, "unavailable for the active Python interpreter"
+        if result.returncode != 0:
+            return False, "not installed for the active Python interpreter"
+        lines = (result.stdout or "").strip().splitlines()
+        return True, lines[0] if lines else f"{sys.executable} -m pip"
+
     exe = shutil.which(command)
     if not exe:
         return False, "not found"
