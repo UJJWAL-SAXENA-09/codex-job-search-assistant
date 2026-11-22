@@ -191,6 +191,8 @@ Check local readiness:
 python tools/setup_check.py
 ```
 
+Read the readiness summary by capability. `READY for baseline Codex workflows` confirms that Python, its `pip` module, Git, and the required workspace files pass the baseline checks. PDF compilation, ATS extraction, and portal CLI support are reported separately. Install LaTeX, Poppler, or Bun for the capabilities you plan to use, then rerun the setup check to confirm availability.
+
 Run repository smoke checks:
 
 ```bash
