@@ -203,6 +203,14 @@ Run full local checks, including LaTeX and portal CLI smoke checks when tools ar
 python tests/smoke/validate_repo.py --full
 ```
 
+Run the Python regression tests:
+
+```bash
+python -m unittest discover -s tests -p 'test_*.py'
+```
+
+These cover setup-checker behavior, including missing command aliases and checking `pip` in the active Python environment. Run them alongside the smoke check after changing setup tools. If your interpreter is named `python3`, use that in place of `python`.
+
 Compile examples manually:
 
 ```bash
