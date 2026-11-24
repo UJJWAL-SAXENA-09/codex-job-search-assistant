@@ -24,16 +24,21 @@ SECTION_HEADINGS = [
 def extract_text(pdf_path: Path) -> tuple[int, str, str]:
     if not shutil.which("pdftotext"):
         return 3, "", "pdftotext is not installed; install Poppler to run ATS extraction."
-    result = subprocess.run(
-        ["pdftotext", "-layout", str(pdf_path), "-"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        check=False,
-        timeout=30,
-    )
+    try:
+        result = subprocess.run(
+            ["pdftotext", "-layout", str(pdf_path), "-"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+            timeout=30,
+        )
+    except subprocess.TimeoutExpired:
+        return 1, "", "pdftotext timed out after 30 seconds."
+    except OSError as exc:
+        return 1, "", f"Could not run pdftotext: {exc}"
     return result.returncode, result.stdout or "", result.stderr.strip()
 
 

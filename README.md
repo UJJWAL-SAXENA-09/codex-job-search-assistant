@@ -211,7 +211,7 @@ Run the Python regression tests:
 python -m unittest discover -s tests -p 'test_*.py'
 ```
 
-These cover setup-checker behavior, including missing command aliases and checking `pip` in the active Python environment. Run them alongside the smoke check after changing setup tools. If your interpreter is named `python3`, use that in place of `python`.
+These cover setup-checker behavior, including missing command aliases and checking `pip` in the active Python environment, plus ATS extraction failures. Run them alongside the smoke check after changing local validation tools. If your interpreter is named `python3`, use that in place of `python`.
 
 Compile examples manually:
 
@@ -241,6 +241,7 @@ Do not commit CVs, diplomas, passports, references, private notes, generated app
 
 - Missing LaTeX: `.tex` files can still be generated; PDFs cannot be claimed ready.
 - Missing `pdftotext`: ATS extraction is skipped and reported.
+- Poppler launch errors or timeouts: the ATS check reports an error and exits nonzero. Check the executable installation before retrying extraction.
 - Missing Bun: portal CLIs are skipped; pasted postings and web search remain available.
 - Dead job URL: paste the full job description into Codex.
 - Missing salary data: salary benchmarking is optional and skipped.
