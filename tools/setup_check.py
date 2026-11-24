@@ -74,9 +74,11 @@ def command_version(command: str) -> tuple[bool, str]:
             )
         except (OSError, subprocess.TimeoutExpired):
             continue
+        if result.returncode != 0:
+            continue
         first = (result.stdout or "").strip().splitlines()
         return True, first[0] if first else exe
-    return True, exe
+    return False, f"version probes failed for {exe}"
 
 
 def check_json(path: Path) -> tuple[bool, str]:

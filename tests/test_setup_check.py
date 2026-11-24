@@ -1,4 +1,4 @@
-"""Regression checks for setups where only python3 is on PATH."""
+"""Regression checks for interpreter and executable readiness probes."""
 
 import importlib.util
 from pathlib import Path
@@ -48,6 +48,46 @@ class PythonInterpreterChecks(unittest.TestCase):
             found, detail = setup_check.command_version("pip")
         self.assertFalse(found)
         self.assertIn("unavailable", detail)
+
+
+class ExecutableChecks(unittest.TestCase):
+    def test_a_failed_probe_falls_back_to_a_supported_version_flag(self):
+        results = [
+            subprocess.CompletedProcess([], 1, stdout="unsupported option\n"),
+            subprocess.CompletedProcess([], 0, stdout="tool version 1.0\n"),
+        ]
+        with patch.object(setup_check.shutil, "which", return_value="/tools/tool"), patch.object(
+            setup_check.subprocess, "run", side_effect=results
+        ) as probe:
+            found, detail = setup_check.command_version("tool")
+        self.assertTrue(found)
+        self.assertEqual(detail, "tool version 1.0")
+        self.assertEqual(probe.call_count, 2)
+
+    def test_an_executable_that_only_returns_errors_is_unavailable(self):
+        result = subprocess.CompletedProcess([], 1, stdout="failed to start\n")
+        with patch.object(setup_check.shutil, "which", return_value="/tools/tool"), patch.object(
+            setup_check.subprocess, "run", return_value=result
+        ):
+            found, detail = setup_check.command_version("tool")
+        self.assertFalse(found)
+        self.assertIn("version probes failed", detail)
+
+    def test_an_executable_that_cannot_be_launched_is_unavailable(self):
+        with patch.object(setup_check.shutil, "which", return_value="/tools/tool"), patch.object(
+            setup_check.subprocess, "run", side_effect=PermissionError("not executable")
+        ):
+            found, _ = setup_check.command_version("tool")
+        self.assertFalse(found)
+
+    def test_a_failed_pdftotext_probe_is_not_reported_as_available(self):
+        result = subprocess.CompletedProcess([], 1, stdout="broken installation\n")
+        with patch.object(setup_check.shutil, "which", return_value="/tools/pdftotext"), patch.object(
+            setup_check.subprocess, "run", return_value=result
+        ) as probe:
+            found, _ = setup_check.command_version("pdftotext")
+        self.assertFalse(found)
+        self.assertEqual(probe.call_count, 1)
 
 
 if __name__ == "__main__":
